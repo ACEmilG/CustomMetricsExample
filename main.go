@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
-	"contrib.go.opencensus.io/exporter/stackdriver"
 	"fmt"
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
-	monitoredrespb "google.golang.org/genproto/googleapis/api/monitoredres"
 	"math"
 	"math/rand"
 	"net/http"
 	"os"
 	"time"
+
+	"contrib.go.opencensus.io/exporter/stackdriver"
+	"go.opencensus.io/stats"
+	"go.opencensus.io/stats/view"
+	"go.opencensus.io/tag"
+	monitoredrespb "google.golang.org/genproto/googleapis/api/monitoredres"
 )
 
 var (
