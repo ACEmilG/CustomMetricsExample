@@ -53,7 +53,7 @@ func doWork(ctx context.Context) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	if rand.Intn(2) > 0 {
 		tag.Upsert(memoryTypeTag, "high")
 	} else {
