@@ -1,28 +1,28 @@
 package main
 
 import (
-	"os"
 	"context"
-	"fmt"
-	"math/rand"
-	"math"
-	"net/http"
-	"time"
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"fmt"
 	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
 	"go.opencensus.io/stats/view"
+	"go.opencensus.io/tag"
 	monitoredrespb "google.golang.org/genproto/googleapis/api/monitoredres"
+	"math"
+	"math/rand"
+	"net/http"
+	"os"
+	"time"
 )
 
 var (
 	mRequestLatencyMs = stats.Int64("request_latency", "The latency in milliseconds per request", "ms")
-	memoryTypeTag, _ = tag.NewKey("memory_type")
+	memoryTypeTag, _  = tag.NewKey("memory_type")
 )
 
 func reportLatency(ctx context.Context, start time.Time) {
 	elapsed := time.Since(start)
-	stats.Record(ctx, mRequestLatencyMs.M(elapsed.Nanoseconds() / 1000000))
+	stats.Record(ctx, mRequestLatencyMs.M(elapsed.Nanoseconds()/1000000))
 }
 
 func getDistributionBuckets() []float64 {
@@ -35,10 +35,10 @@ func getDistributionBuckets() []float64 {
 
 func enableViews() error {
 	requestLatencyView := &view.View{
-		Name: "request_latency",
-		Measure: mRequestLatencyMs,
+		Name:        "request_latency",
+		Measure:     mRequestLatencyMs,
 		Description: "The distribution of request latencies",
-		TagKeys: []tag.Key{memoryTypeTag},
+		TagKeys:     []tag.Key{memoryTypeTag},
 		Aggregation: view.Distribution(getDistributionBuckets()...),
 	}
 	return view.Register(requestLatencyView)
@@ -53,7 +53,7 @@ func doWork(ctx context.Context) {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	if (rand.Intn(2) > 0) {
+	if rand.Intn(2) > 0 {
 		tag.Upsert(memoryTypeTag, "high")
 	} else {
 		tag.Upsert(memoryTypeTag, "low")
@@ -65,11 +65,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	sd, _ := stackdriver.NewExporter(stackdriver.Options{
 		ProjectID: "acemil-1",
-		Resource: &monitoredrespb.MonitoredResource {
+		Resource: &monitoredrespb.MonitoredResource{
 			Type: "gce_instance",
-			Labels: map[string]string {
+			Labels: map[string]string{
 				"instance_id": os.Getenv("MY_GCE_INSTANCE_ID"),
-				"zone": os.Getenv("MY_GCE_INSTANCE_ZONE"),
+				"zone":        os.Getenv("MY_GCE_INSTANCE_ZONE"),
 			},
 		},
 	})
